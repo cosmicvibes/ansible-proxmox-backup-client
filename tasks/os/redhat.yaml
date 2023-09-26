@@ -1,0 +1,16 @@
+---
+# Proxmox does not have an official repo for RHEL based distros. This is a community repo.
+# https://copr.fedorainfracloud.org/coprs/derenderkeks/proxmox-backup-client/
+- name: Add Proxmox Backup Client Repo
+  command: dnf copr enable derenderkeks/proxmox-backup-client -y
+  changed_when: false
+
+- name: Install the Proxmox Backup Client
+  ansible.builtin.dnf:
+    name: proxmox-backup-client
+    state: present
+
+- name: Install the Expect shell
+  ansible.builtin.dnf:
+    name: expect
+    state: present
