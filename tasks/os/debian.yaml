@@ -1,14 +1,30 @@
 ---
-# TODO: Determine Ubuntu or Debian and select the appropriate repo based on version
+- name: Assign distribution values based on OS version
+  block:
+    - ansible.builtin.set_fact:
+        proxmox_backup_client_distribution: bullseye
+      when: ansible_distribution == "Debian" and ansible_distribution_major_version == "11"
+    - ansible.builtin.set_fact:
+        proxmox_backup_client_distribution: bookworm
+      when: ansible_distribution == "Debian" and ansible_distribution_major_version == "12"
+    - ansible.builtin.set_fact:
+        proxmox_backup_client_distribution: bookworm
+      when: ansible_distribution == "Ubuntu" and (ansible_distribution_major_version == "22" or ansible_distribution_major_version == "23")
+    - ansible.builtin.set_fact:
+        proxmox_backup_client_distribution: bullseye
+      when: ansible_distribution == "Ubuntu" and (ansible_distribution_major_version == "20" or ansible_distribution_major_version == "21")
+    - ansible.builtin.set_fact:
+        proxmox_backup_client_distribution: buster
+      when: ansible_distribution == "Ubuntu" and (ansible_distribution_major_version == "18" or ansible_distribution_major_version == "19")
 
 - name: Add the Proxmox Apt signing key
   ansible.builtin.apt_key:
-    url: https://enterprise.proxmox.com/debian/proxmox-release-bullseye.gpg
+    url: https://enterprise.proxmox.com/debian/proxmox-release-{{ proxmox_backup_client_distribution }}.gpg
     state: present
 
 - name: Add Proxmox Repo
   ansible.builtin.apt_repository:
-    repo: deb http://download.proxmox.com/debian/pbs-client bullseye main
+    repo: deb http://download.proxmox.com/debian/pbs-client {{ proxmox_backup_client_distribution }} main
     state: present
 
 - name: Install the Proxmox Backup Client
