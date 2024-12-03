@@ -24,7 +24,7 @@
 
 - name: Add Proxmox Repo
   ansible.builtin.apt_repository:
-    repo: deb http://download.proxmox.com/debian/pbs-client {{ proxmox_backup_client_distribution }} main
+    repo: deb [arch=amd64] http://download.proxmox.com/debian/pbs-client {{ proxmox_backup_client_distribution }} main
     state: present
 
 - name: Install the Proxmox Backup Client
